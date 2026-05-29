@@ -202,9 +202,10 @@ $riwayat = mysqli_stmt_get_result($riwayat);
         </div>
 
         <div class="bottom-nav">
-            <a href="dashboard.php" class="nav-item active-nav">Beranda</a>
+            <a href="dashboard.php" class="nav-item  active-nav">Beranda</a>
             <a href="riwayat.php" class="nav-item">Riwayat</a>
             <a href="notifikasi.php" class="nav-item">Notifikasi</a>
+            <a href="profil.php" class="nav-item">Profil</a>
             <a href="../logout.php" class="nav-item">Logout</a>
         </div>
 

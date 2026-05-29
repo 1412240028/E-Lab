@@ -127,15 +127,20 @@ $riwayat = mysqli_stmt_get_result($stmt);
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <h6 class="mb-1"><?= htmlspecialchars($r['nama_lab']) ?></h6>
-                            <p class="text-secondary mb-1" style="font-size:13px;">
+                            <p class="mb-1 text-secondary" style="font-size:13px;">
                                 📅 <?= $r['tanggal_pinjam'] ?>
                             </p>
-                            <p class="text-secondary mb-1" style="font-size:13px;">
+                            <p class="mb-1 text-secondary" style="font-size:13px;">
                                 🕐 <?= $r['jam_mulai'] ?> - <?= $r['jam_selesai'] ?>
                             </p>
-                            <p class="text-secondary mb-0" style="font-size:13px;">
+                            <p class="mb-1 text-secondary" style="font-size:13px;">
                                 📝 <?= htmlspecialchars($r['keperluan']) ?>
                             </p>
+                            <?php if ($r['status'] == 'disetujui') { ?>
+                                <a href="cetak_surat.php?id=<?= $r['id_peminjaman'] ?>" style="font-size:12px; color:#4b2ea7;">
+                                    🖨️ Cetak Surat
+                                </a>
+                            <?php } ?>
                         </div>
                         <div>
                             <span class="badge-<?= $r['status'] ?>">
@@ -149,9 +154,10 @@ $riwayat = mysqli_stmt_get_result($stmt);
         </div>
 
         <div class="bottom-nav">
-            <a href="dashboard.php" class="nav-item active-nav">Beranda</a>
-            <a href="riwayat.php" class="nav-item">Riwayat</a>
+            <a href="dashboard.php" class="nav-item">Beranda</a>
+            <a href="riwayat.php" class="nav-item active-nav">Riwayat</a>
             <a href="notifikasi.php" class="nav-item">Notifikasi</a>
+            <a href="profil.php" class="nav-item">Profil</a>
             <a href="../logout.php" class="nav-item">Logout</a>
         </div>
 

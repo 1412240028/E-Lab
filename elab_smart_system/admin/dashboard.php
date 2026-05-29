@@ -14,6 +14,24 @@ $review = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM peminjaman WHERE st
 $setuju = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM peminjaman WHERE status='disetujui'"));
 $labaktif = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laboratorium WHERE status='tersedia'"));
 
+// Data grafik peminjaman per bulan
+$grafik = mysqli_query($conn, "
+    SELECT 
+        MONTH(tanggal_pinjam) as bulan,
+        COUNT(*) as total
+    FROM peminjaman
+    WHERE YEAR(tanggal_pinjam) = YEAR(CURDATE())
+    GROUP BY MONTH(tanggal_pinjam)
+    ORDER BY bulan ASC
+");
+
+$bulan_label = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+$data_grafik = array_fill(0, 12, 0);
+
+while ($g = mysqli_fetch_assoc($grafik)) {
+    $data_grafik[(int) $g['bulan'] - 1] = (int) $g['total'];
+}
+
 // Hanya ambil yang menunggu
 $peminjaman = mysqli_query($conn, "
     SELECT peminjaman.*, users.nama, users.role, laboratorium.nama_lab
@@ -35,6 +53,7 @@ $inisial = strtoupper(substr($namaAdmin, 0, 2));
     <title>E-Lab Smart System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             background: #efefef;
@@ -169,11 +188,16 @@ $inisial = strtoupper(substr($namaAdmin, 0, 2));
             color: #999;
             font-size: 14px;
             text-align: center;
+            text-decoration: none;
         }
 
         .active-nav {
             color: #4b2ea7;
             font-weight: bold;
+        }
+
+        .p-4 {
+            padding-bottom: 80px !important;
         }
     </style>
 </head>
@@ -223,6 +247,40 @@ $inisial = strtoupper(substr($namaAdmin, 0, 2));
                     </div>
                 </div>
             </div>
+
+            <div class="section-title">PEMINJAMAN PER BULAN</div>
+
+            <div class="stat-card">
+                <canvas id="grafikPeminjaman"></canvas>
+            </div>
+
+            <script>
+                const ctx = document.getElementById('grafikPeminjaman').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: <?= json_encode($bulan_label) ?>,
+                        datasets: [{
+                            label: 'Jumlah Peminjaman',
+                            data: <?= json_encode($data_grafik) ?>,
+                            backgroundColor: '#4b2ea7',
+                            borderRadius: 8,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { stepSize: 1 }
+                            }
+                        }
+                    }
+                });
+            </script>
 
             <div class="section-title">PERMOHONAN MENUNGGU REVIEW</div>
 
@@ -278,6 +336,7 @@ $inisial = strtoupper(substr($namaAdmin, 0, 2));
             <a href="jadwal.php" class="nav-item" style="text-decoration:none;">Jadwal</a>
             <a href="laporan.php" class="nav-item" style="text-decoration:none;">Laporan</a>
             <a href="kelola.php" class="nav-item" style="text-decoration:none;">Kelola</a>
+            <a href="../logout.php" class="nav-item">Logout</a>
         </div>
 
     </div>
