@@ -1,57 +1,95 @@
 <?php
-session_start();
-include '../koneksi.php';
+require_once "_guard.php";
+require_once "../koneksi.php";
 
-if(!isset($_SESSION['role']) || $_SESSION['role'] != 'admin'){
-    header("Location: ../login.php");
+$aksi = isset($_POST['aksi']) ? trim($_POST['aksi']) : '';
+$allowedAksi = ['tambah', 'edit', 'hapus'];
+
+if (!in_array($aksi, $allowedAksi, true)) {
+    header("Location: kelola.php");
     exit;
 }
 
-$aksi = isset($_POST['aksi']) ? $_POST['aksi'] : '';
+$allowedStatus = ['tersedia', 'tidak tersedia'];
 
-// TAMBAH
-if($aksi == 'tambah'){
-    $nama_lab = trim($_POST['nama_lab']);
-    $kapasitas = (int)$_POST['kapasitas'];
-    $lokasi = trim($_POST['lokasi']);
-    $status = $_POST['status'];
+if ($aksi === 'tambah' || $aksi === 'edit') {
+    $nama_lab = isset($_POST['nama_lab']) ? trim($_POST['nama_lab']) : '';
+    $kapasitas = isset($_POST['kapasitas']) ? (int) $_POST['kapasitas'] : 0;
+    $lokasi = isset($_POST['lokasi']) ? trim($_POST['lokasi']) : '';
+    $status = isset($_POST['status']) ? trim($_POST['status']) : '';
 
-    $stmt = mysqli_prepare($conn,"
+    if ($nama_lab === '' || $kapasitas <= 0 || $lokasi === '' || !in_array($status, $allowedStatus, true)) {
+        header("Location: kelola.php");
+        exit;
+    }
+}
+
+if ($aksi === 'tambah') {
+    $stmt = mysqli_prepare($conn, "
         INSERT INTO laboratorium(nama_lab, kapasitas, lokasi, status)
         VALUES(?, ?, ?, ?)
     ");
+
+    if (!$stmt) {
+        header("Location: kelola.php");
+        exit;
+    }
+
     mysqli_stmt_bind_param($stmt, "siss", $nama_lab, $kapasitas, $lokasi, $status);
     mysqli_stmt_execute($stmt);
+
+    header("Location: kelola.php");
+    exit;
 }
 
-// EDIT
-if($aksi == 'edit'){
-    $id_lab = (int)$_POST['id_lab'];
-    $nama_lab = trim($_POST['nama_lab']);
-    $kapasitas = (int)$_POST['kapasitas'];
-    $lokasi = trim($_POST['lokasi']);
-    $status = $_POST['status'];
+if ($aksi === 'edit') {
+    $id_lab = isset($_POST['id_lab']) ? (int) $_POST['id_lab'] : 0;
 
-    $stmt = mysqli_prepare($conn,"
+    if ($id_lab <= 0) {
+        header("Location: kelola.php");
+        exit;
+    }
+
+    $stmt = mysqli_prepare($conn, "
         UPDATE laboratorium
-        SET nama_lab=?, kapasitas=?, lokasi=?, status=?
-        WHERE id_lab=?
+        SET nama_lab = ?, kapasitas = ?, lokasi = ?, status = ?
+        WHERE id_lab = ?
     ");
+
+    if (!$stmt) {
+        header("Location: kelola.php");
+        exit;
+    }
+
     mysqli_stmt_bind_param($stmt, "sissi", $nama_lab, $kapasitas, $lokasi, $status, $id_lab);
     mysqli_stmt_execute($stmt);
+
+    header("Location: kelola.php");
+    exit;
 }
 
-// HAPUS
-if($aksi == 'hapus'){
-    $id_lab = (int)$_POST['id_lab'];
+if ($aksi === 'hapus') {
+    $id_lab = isset($_POST['id_lab']) ? (int) $_POST['id_lab'] : 0;
 
-    $stmt = mysqli_prepare($conn,"
-        DELETE FROM laboratorium WHERE id_lab=?
+    if ($id_lab <= 0) {
+        header("Location: kelola.php");
+        exit;
+    }
+
+    $stmt = mysqli_prepare($conn, "
+        DELETE FROM laboratorium
+        WHERE id_lab = ?
     ");
+
+    if (!$stmt) {
+        header("Location: kelola.php");
+        exit;
+    }
+
     mysqli_stmt_bind_param($stmt, "i", $id_lab);
     mysqli_stmt_execute($stmt);
-}
 
-header("Location: kelola.php");
-exit;
+    header("Location: kelola.php");
+    exit;
+}
 ?>
