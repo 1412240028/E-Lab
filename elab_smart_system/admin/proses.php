@@ -1,30 +1,27 @@
 <?php
-session_start();
-include '../koneksi.php';
+require_once "_guard.php";
+require_once "../koneksi.php";
 
-// Cek session
-if(!isset($_SESSION['role']) || $_SESSION['role'] != 'admin'){
-    header("Location: ../login.php");
-    exit;
-}
-
-// Validasi input
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$status = isset($_GET['status']) ? $_GET['status'] : '';
+$id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+$status = isset($_GET['status']) ? trim($_GET['status']) : '';
 
 $allowed_status = ['disetujui', 'ditolak'];
 
-if($id == 0 || !in_array($status, $allowed_status)){
+if ($id <= 0 || !in_array($status, $allowed_status, true)) {
     header("Location: dashboard.php");
     exit;
 }
 
-// Update pakai prepared statement
-$stmt = mysqli_prepare($conn,"
+$stmt = mysqli_prepare($conn, "
     UPDATE peminjaman
-    SET status=?, dibaca=0
-    WHERE id_peminjaman=?
+    SET status = ?, dibaca = 0
+    WHERE id_peminjaman = ?
 ");
+
+if (!$stmt) {
+    header("Location: dashboard.php");
+    exit;
+}
 
 mysqli_stmt_bind_param($stmt, "si", $status, $id);
 mysqli_stmt_execute($stmt);

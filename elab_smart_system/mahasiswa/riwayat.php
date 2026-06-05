@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once("_guard.php");
+require_once "_guard.php";
 require_once "../koneksi.php";
 
 // Cek session
