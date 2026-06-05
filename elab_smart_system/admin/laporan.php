@@ -72,7 +72,8 @@ $totalDitolak = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM peminjaman WH
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     <!-- E-Lab UI -->
     <link rel="stylesheet" href="../assets/css/main.css">
@@ -139,10 +140,7 @@ $totalDitolak = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM peminjaman WH
 
                                     <div class="input-group-modern">
                                         <label>Cari Nama / Lab</label>
-                                        <input
-                                            type="text"
-                                            name="cari"
-                                            class="form-control"
+                                        <input type="text" name="cari" class="form-control"
                                             placeholder="Contoh: Dhoni / Lab Komputer"
                                             value="<?= htmlspecialchars($cari) ?>">
                                     </div>
@@ -165,10 +163,7 @@ $totalDitolak = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM peminjaman WH
 
                                     <div class="input-group-modern">
                                         <label>Tanggal</label>
-                                        <input
-                                            type="date"
-                                            name="tanggal"
-                                            class="form-control"
+                                        <input type="date" name="tanggal" class="form-control"
                                             value="<?= htmlspecialchars($filter_tanggal) ?>">
                                     </div>
 
@@ -185,11 +180,11 @@ $totalDitolak = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM peminjaman WH
                                 </div>
 
                                 <div class="export-actions">
-                                    <a href="export_excel.php" class="btn-export-excel">
+                                    <a href="export_excel.php?<?= http_build_query($_GET) ?>" class="btn-export-excel">
                                         Export Excel
                                     </a>
 
-                                    <a href="export_pdf.php" class="btn-export-pdf">
+                                    <a href="export_pdf.php?<?= http_build_query($_GET) ?>" class="btn-export-pdf">
                                         Export PDF
                                     </a>
                                 </div>
@@ -223,7 +218,8 @@ $totalDitolak = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM peminjaman WH
 
                                             <p class="report-meta">
                                                 📅 <?= htmlspecialchars($d['tanggal_pinjam']) ?><br>
-                                                🕐 <?= htmlspecialchars($d['jam_mulai']) ?> - <?= htmlspecialchars($d['jam_selesai']) ?><br>
+                                                🕐 <?= htmlspecialchars($d['jam_mulai']) ?> -
+                                                <?= htmlspecialchars($d['jam_selesai']) ?><br>
                                                 📝 <?= htmlspecialchars($d['keperluan']) ?>
                                             </p>
                                         </div>
@@ -241,7 +237,7 @@ $totalDitolak = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM peminjaman WH
 
             </div>
 
-             <?php require_once "_nav.php"; ?>
+            <?php require_once "_nav.php"; ?>
 
         </section>
     </main>

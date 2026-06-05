@@ -18,7 +18,7 @@ $labTidakTersedia = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laborator
 <html lang="id">
 
 <head>
-    <title>Jadwal Laboratorium - E-Lab Smart System</title>
+    <title>Daftar Laboratorium - E-Lab Smart System</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -40,9 +40,9 @@ $labTidakTersedia = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laborator
             <!-- Header -->
             <header class="app-header admin">
                 <div class="app-header-content">
-                    <h1 class="app-title">Jadwal Laboratorium</h1>
+                    <h1 class="app-title">Status Laboratorium</h1>
                     <p class="app-subtitle">
-                        <?= htmlspecialchars($_SESSION['nama']) ?> • Admin Laboratorium
+                        <?= htmlspecialchars($_SESSION['nama']) ?> • Monitoring status dan ketersediaan lab
                     </p>
                     <a href="../logout.php" class="app-logout">Keluar dari sistem</a>
                 </div>
@@ -81,7 +81,7 @@ $labTidakTersedia = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laborator
                     </div>
                 </div>
 
-                <div class="section-label">Daftar Jadwal Lab</div>
+                <div class="section-label">Daftar Laboratorium</div>
 
                 <?php if (mysqli_num_rows($data) == 0) { ?>
                     <div class="empty-state">
