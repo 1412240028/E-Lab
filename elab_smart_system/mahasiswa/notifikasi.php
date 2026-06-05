@@ -1,6 +1,7 @@
 <?php
 session_start();
-include '../koneksi.php';
+require_once("_guard.php");
+require_once "../koneksi.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'mahasiswa') {
     header("Location: ../login.php");
@@ -198,6 +199,8 @@ $inisial = strtoupper(substr($namaMahasiswa, 0, 2));
         </section>
     </main>
 
+    <?php require_once "_nav.php"; ?>
+    
 </body>
 
 </html>

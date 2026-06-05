@@ -1,6 +1,7 @@
 <?php
 session_start();
-include '../koneksi.php';
+require_once "_guard.php";
+require_once "../koneksi.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     header("Location: ../login.php");
@@ -237,6 +238,8 @@ function getInitial($name)
 
         </section>
     </main>
+
+    <?php require_once "_nav.php"; ?>
 
 </body>
 

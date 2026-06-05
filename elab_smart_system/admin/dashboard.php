@@ -1,6 +1,7 @@
 <?php
 session_start();
-include '../koneksi.php';
+require_once "_guard.php";
+require_once "../koneksi.php";
 
 // Cek session
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
@@ -58,7 +59,8 @@ $inisial = strtoupper(substr($namaAdmin, 0, 2));
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     <!-- Chart JS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -197,7 +199,8 @@ $inisial = strtoupper(substr($namaAdmin, 0, 2));
                                         <p class="request-meta">
                                             <?= htmlspecialchars($d['nama_lab']) ?><br>
                                             <?= htmlspecialchars($d['tanggal_pinjam']) ?>,
-                                            <?= htmlspecialchars($d['jam_mulai']) ?> - <?= htmlspecialchars($d['jam_selesai']) ?>
+                                            <?= htmlspecialchars($d['jam_mulai']) ?> -
+                                            <?= htmlspecialchars($d['jam_selesai']) ?>
                                         </p>
                                     </div>
 
@@ -207,17 +210,13 @@ $inisial = strtoupper(substr($namaAdmin, 0, 2));
                                 </div>
 
                                 <div class="action-row">
-                                    <a
-                                        href="proses.php?id=<?= $d['id_peminjaman'] ?>&status=ditolak"
-                                        class="btn-action btn-reject"
-                                        onclick="return confirm('Tolak permohonan ini?')">
+                                    <a href="proses.php?id=<?= $d['id_peminjaman'] ?>&status=ditolak"
+                                        class="btn-action btn-reject" onclick="return confirm('Tolak permohonan ini?')">
                                         Tolak
                                     </a>
 
-                                    <a
-                                        href="proses.php?id=<?= $d['id_peminjaman'] ?>&status=disetujui"
-                                        class="btn-action btn-approve"
-                                        onclick="return confirm('Setujui permohonan ini?')">
+                                    <a href="proses.php?id=<?= $d['id_peminjaman'] ?>&status=disetujui"
+                                        class="btn-action btn-approve" onclick="return confirm('Setujui permohonan ini?')">
                                         Setujui
                                     </a>
                                 </div>
@@ -237,7 +236,7 @@ $inisial = strtoupper(substr($namaAdmin, 0, 2));
                             }
 
                             while ($l = mysqli_fetch_assoc($lab)) {
-                            ?>
+                                ?>
                                 <div class="lab-status-item">
                                     <div class="lab-name">
                                         <?php if ($l['status'] == 'tersedia') { ?>
@@ -273,6 +272,8 @@ $inisial = strtoupper(substr($namaAdmin, 0, 2));
 
         </section>
     </main>
+
+    <?php require_once "_nav.php"; ?>
 
 </body>
 

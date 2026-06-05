@@ -1,6 +1,7 @@
 <?php
 session_start();
-include '../koneksi.php';
+require_once("_guard.php");
+require_once "../koneksi.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'mahasiswa') {
     header("Location: ../login.php");
@@ -240,6 +241,8 @@ $totalDitolak = mysqli_fetch_assoc(mysqli_stmt_get_result($stmtDitolak))['total'
         </section>
     </main>
 
+    <?php require_once "_nav.php"; ?>
+    
 </body>
 
 </html>

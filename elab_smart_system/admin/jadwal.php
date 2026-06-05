@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once "_guard.php";
 include '../koneksi.php';
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
@@ -135,9 +136,10 @@ $labTidakTersedia = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laborator
                 <a href="kelola_user.php">User</a>
                 <a href="../logout.php">Logout</a>
             </nav>
-
         </section>
     </main>
+
+    <?php require_once "_nav.php"; ?>
 
 </body>
 

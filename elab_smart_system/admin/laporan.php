@@ -1,6 +1,7 @@
 <?php
 session_start();
-include '../koneksi.php';
+require_once "_guard.php";
+require_once "../koneksi.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     header("Location: ../login.php");
@@ -249,9 +250,10 @@ $totalDitolak = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM peminjaman WH
                 <a href="kelola_user.php">User</a>
                 <a href="../logout.php">Logout</a>
             </nav>
-
         </section>
     </main>
+
+    <?php require_once "_nav.php"; ?>
 
 </body>
 

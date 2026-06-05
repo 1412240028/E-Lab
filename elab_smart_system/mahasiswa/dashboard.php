@@ -1,6 +1,7 @@
 <?php
 session_start();
-include '../koneksi.php';
+require_once("_guard.php");
+require_once "../koneksi.php";
 
 // Cek session
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'mahasiswa') {
@@ -290,9 +291,11 @@ $inisial = strtoupper(substr($namaMahasiswa, 0, 2));
                 <a href="profil.php">Profil</a>
                 <a href="../logout.php">Logout</a>
             </nav>
-
+            
         </section>
     </main>
+
+    <?php require_once "_nav.php"; ?>
 
 </body>
 

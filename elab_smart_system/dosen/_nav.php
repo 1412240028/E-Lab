@@ -1,6 +1,6 @@
 <nav class="bottom-nav-modern bottom-nav-dosen">
     <a href="dashboard.php" class="<?= basename($_SERVER['PHP_SELF']) === 'dashboard.php' ? 'active' : '' ?>">
-        Dashboard
+        Beranda
     </a>
 
     <a href="jadwal.php" class="<?= basename($_SERVER['PHP_SELF']) === 'jadwal.php' ? 'active' : '' ?>">
