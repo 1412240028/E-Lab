@@ -124,6 +124,14 @@
     box-shadow: 0 12px 26px rgba(0,0,0,0.16);
 }
 
+.profile-circle.student {
+    color: var(--primary-blue);
+}
+
+.profile-circle.lecturer {
+    color: var(--lecturer-green);
+}
+
 .section-label {
     margin: 24px 0 14px;
     color: var(--text-muted);

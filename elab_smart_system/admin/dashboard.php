@@ -259,7 +259,7 @@ $inisial = strtoupper(substr($namaAdmin, 0, 2));
                 </div>
 
             </div>
-
+            
             <?php require_once "_nav.php"; ?>
 
         </section>

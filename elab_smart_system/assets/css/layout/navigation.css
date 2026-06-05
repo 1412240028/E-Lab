@@ -10,7 +10,7 @@
     width: calc(100% - 28px);
     max-width: 402px;
     min-height: 66px;
-    background: rgba(255,255,255,0.94);
+    background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(18px);
     border: 1px solid rgba(229, 231, 235, 0.9);
     border-radius: 24px;
@@ -19,7 +19,7 @@
     grid-template-columns: repeat(6, 1fr);
     gap: 2px;
     padding: 8px;
-    z-index: 10;
+    z-index: 999;
 }
 
 .bottom-nav-modern a {
@@ -39,19 +39,69 @@
     color: var(--admin-purple);
 }
 
-/* ===============================
-   Responsive
-   =============================== */
+/* Role variants */
+.bottom-nav-modern.bottom-nav-admin {
+    grid-template-columns: repeat(6, 1fr);
+    max-width: 760px;
+    width: calc(100% - 56px);
+    min-height: 66px;
+}
+
+.bottom-nav-modern.bottom-nav-student {
+    grid-template-columns: repeat(5, 1fr);
+    max-width: 680px;
+    width: calc(100% - 56px);
+    min-height: 66px;
+}
+
+.bottom-nav-modern.bottom-nav-dosen {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 620px;
+    width: calc(100% - 56px);
+    min-height: 66px;
+}
+
+.bottom-nav-modern.bottom-nav-admin a,
+.bottom-nav-modern.bottom-nav-student a,
+.bottom-nav-modern.bottom-nav-dosen a {
+    min-height: 50px;
+    border-radius: 18px;
+    font-size: 12px;
+}
+
+.bottom-nav-modern.bottom-nav-admin a.active {
+    background: rgba(64, 49, 143, 0.13);
+    color: var(--admin-purple);
+}
+
+.bottom-nav-modern.bottom-nav-student a.active {
+    background: rgba(15, 98, 254, 0.13);
+    color: var(--primary-blue);
+}
+
+.bottom-nav-modern.bottom-nav-dosen a.active {
+    background: rgba(15, 139, 99, 0.13);
+    color: var(--lecturer-green);
+}
+
+@media (max-width: 900px) {
+    .bottom-nav-modern.bottom-nav-admin,
+    .bottom-nav-modern.bottom-nav-student,
+    .bottom-nav-modern.bottom-nav-dosen {
+        width: calc(100% - 24px);
+        max-width: none;
+    }
+}
 
 @media (max-width: 480px) {
     .bottom-nav-modern {
         bottom: 12px;
     }
-}
 
-@media (min-width: 900px) {
-    .bottom-nav-modern {
-        max-width: 760px;
-        grid-template-columns: repeat(6, 1fr);
+    .bottom-nav-modern.bottom-nav-admin a,
+    .bottom-nav-modern.bottom-nav-student a,
+    .bottom-nav-modern.bottom-nav-dosen a {
+        font-size: 11px;
+        padding: 8px 4px;
     }
 }
