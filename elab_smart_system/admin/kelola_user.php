@@ -39,12 +39,6 @@ function getInitial($name)
 
     <!-- E-Lab UI -->
     <link rel="stylesheet" href="../assets/css/main.css">
-    <script>
-        document.querySelector('select[name="role"]').addEventListener('change', function () {
-            document.getElementById('field-nim').style.display = this.value === 'mahasiswa' ? 'block' : 'none';
-            document.getElementById('field-nip').style.display = this.value === 'dosen' ? 'block' : 'none';
-        });
-    </script>
 </head>
 
 <body>
@@ -136,7 +130,7 @@ function getInitial($name)
                                         placeholder="Masukkan email pengguna" required>
                                 </div>
 
-                                <div class="input-group-modern" id="field-nim" style="display:none;">
+                                <div class="input-group-modern" id="field-nim" style="display:block;">
                                     <label>NIM</label>
                                     <input type="text" name="nim" class="form-control"
                                         placeholder="Masukkan NIM mahasiswa">
@@ -144,8 +138,10 @@ function getInitial($name)
 
                                 <div class="input-group-modern" id="field-nip" style="display:none;">
                                     <label>NIP</label>
-                                    <input type="text" name="nip" class="form-control" placeholder="Masukkan NIP dosen">
+                                    <input type="text" name="nip" class="form-control"
+                                        placeholder="Masukkan NIP dosen">
                                 </div>
+
                                 <div class="input-group-modern">
                                     <label>Password</label>
                                     <input type="password" name="password" class="form-control"
@@ -154,7 +150,7 @@ function getInitial($name)
 
                                 <div class="input-group-modern">
                                     <label>Role</label>
-                                    <select name="role" class="form-select" required>
+                                    <select name="role" id="selectRole" class="form-select" required>
                                         <option value="mahasiswa">Mahasiswa</option>
                                         <option value="dosen">Dosen</option>
                                         <option value="admin">Admin</option>
@@ -241,6 +237,13 @@ function getInitial($name)
 
         </section>
     </main>
+
+    <script>
+        document.getElementById('selectRole').addEventListener('change', function () {
+            document.getElementById('field-nim').style.display = this.value === 'mahasiswa' ? 'block' : 'none';
+            document.getElementById('field-nip').style.display = this.value === 'dosen'     ? 'block' : 'none';
+        });
+    </script>
 
 </body>
 

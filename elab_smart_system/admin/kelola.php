@@ -10,7 +10,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
 
 $data = mysqli_query($conn, "SELECT * FROM laboratorium ORDER BY nama_lab ASC");
 
-// Ambil data lab untuk edit jika ada id_edit
 $editData = null;
 
 if (isset($_GET['edit'])) {
@@ -76,7 +75,7 @@ $labTidakTersedia = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laborator
                         <?= htmlspecialchars($_GET['error']) ?>
                     </div>
                 <?php } ?>
-                
+
                 <!-- Statistik Mini -->
                 <div class="section-label">Ringkasan Data Lab</div>
 
@@ -99,6 +98,32 @@ $labTidakTersedia = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laborator
                     <div class="stat-box admin">
                         <div class="stat-number primary"><?= $totalLab ?></div>
                         <div class="stat-text">Data tercatat</div>
+                    </div>
+                </div>
+
+                <div class="section-label">Cari &amp; Filter Lab</div>
+
+                <div class="report-filter-panel mb-3">
+                    <div class="filter-grid" style="grid-template-columns: 1fr 1fr; gap: 14px;">
+
+                        <div class="input-group-modern">
+                            <label>Cari Nama Lab</label>
+                            <input
+                                type="text"
+                                id="searchLab"
+                                class="form-control"
+                                placeholder="Contoh: Lab Komputer...">
+                        </div>
+
+                        <div class="input-group-modern">
+                            <label>Filter Status</label>
+                            <select id="filterStatus" class="form-select">
+                                <option value="">Semua Status</option>
+                                <option value="tersedia">Tersedia</option>
+                                <option value="tidak tersedia">Tidak Tersedia</option>
+                            </select>
+                        </div>
+
                     </div>
                 </div>
 
@@ -191,7 +216,10 @@ $labTidakTersedia = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laborator
                             <?php while ($d = mysqli_fetch_assoc($data)) { ?>
                                 <?php $isAvailable = $d['status'] == 'tersedia'; ?>
 
-                                <div class="manage-lab-card">
+                                <div class="manage-lab-card"
+                                    data-nama="<?= strtolower(htmlspecialchars($d['nama_lab'])) ?>"
+                                    data-status="<?= htmlspecialchars($d['status']) ?>">
+
                                     <div class="manage-lab-head">
                                         <div>
                                             <h3 class="manage-lab-name">
@@ -215,10 +243,17 @@ $labTidakTersedia = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laborator
                                         </span>
                                     </div>
 
-                                    <div class="manage-action-row">
+                                    <div class="manage-action-row" style="grid-template-columns: 1fr 1fr 1fr;">
+
                                         <a href="kelola.php?edit=<?= htmlspecialchars($d['id_lab']) ?>"
                                             class="btn-mini-edit">
                                             Edit
+                                        </a>
+
+                                        <a href="jadwal.php?id_lab=<?= htmlspecialchars($d['id_lab']) ?>"
+                                            class="btn-mini-edit"
+                                            style="background: rgba(15,98,254,0.10); color: var(--primary-blue);">
+                                            Jadwal
                                         </a>
 
                                         <form method="POST" action="kelola_proses.php"
@@ -232,9 +267,16 @@ $labTidakTersedia = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laborator
                                                 Hapus
                                             </button>
                                         </form>
+
                                     </div>
                                 </div>
                             <?php } ?>
+
+                            <!-- TAMBAHAN BARU: Pesan kosong saat filter tidak ada hasil -->
+                            <div id="empty-filter-msg" class="empty-state" style="display:none;">
+                                Tidak ada lab yang cocok dengan pencarian kamu.
+                            </div>
+
                         </div>
                     </div>
 
@@ -246,6 +288,30 @@ $labTidakTersedia = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laborator
 
         </section>
     </main>
+
+    <script>
+        const searchInput  = document.getElementById('searchLab');
+        const filterSelect = document.getElementById('filterStatus');
+        const cards        = document.querySelectorAll('.manage-lab-card');
+
+        function filterLab() {
+            const keyword = searchInput.value.toLowerCase().trim();
+            const status  = filterSelect.value;
+
+            cards.forEach(card => {
+                const namaCocok   = card.dataset.nama.includes(keyword);
+                const statusCocok = status === '' || card.dataset.status === status;
+                card.style.display = (namaCocok && statusCocok) ? 'block' : 'none';
+            });
+
+            const visible = [...cards].filter(c => c.style.display !== 'none');
+            document.getElementById('empty-filter-msg').style.display =
+                visible.length === 0 ? 'block' : 'none';
+        }
+
+        searchInput.addEventListener('input', filterLab);
+        filterSelect.addEventListener('change', filterLab);
+    </script>
 
 </body>
 
