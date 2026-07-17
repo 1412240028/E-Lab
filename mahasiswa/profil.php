@@ -1,7 +1,7 @@
 <?php
-session_start();
 require_once("_guard.php");
 require_once "../koneksi.php";
+require_once "../includes/functions.php";
 
 
 // Ambil data user
@@ -98,17 +98,7 @@ $totalDitolak = mysqli_fetch_assoc(mysqli_stmt_get_result($stmtDitolak))['total'
 
             <div class="app-body">
 
-                <?php if (isset($_GET['success'])) { ?>
-                    <div class="alert alert-success mb-3">
-                        <?= htmlspecialchars($_GET['success']) ?>
-                    </div>
-                <?php } ?>
-
-                <?php if (isset($_GET['error'])) { ?>
-                    <div class="alert alert-danger mb-3">
-                        <?= htmlspecialchars($_GET['error']) ?>
-                    </div>
-                <?php } ?>
+                <?= elab_render_alerts($_GET['error'] ?? null, $_GET['success'] ?? null) ?>
 
                 <!-- Ringkasan -->
                 <div class="section-label">Ringkasan Akun</div>

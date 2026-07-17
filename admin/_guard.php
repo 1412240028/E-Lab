@@ -1,15 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once dirname(__DIR__) . '/includes/functions.php';
 
-if (!isset($_SESSION['id_user']) || !isset($_SESSION['role'])) {
-    header("Location: ../login.php");
-    exit;
-}
-
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: ../login.php");
-    exit;
-}
+elab_require_role(['admin']);
 ?>

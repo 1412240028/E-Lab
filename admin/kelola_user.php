@@ -1,8 +1,7 @@
 <?php
-session_start();
 require_once "_guard.php";
 require_once "../koneksi.php";
-
+require_once "../includes/functions.php";
 
 $users = mysqli_query($conn, "SELECT * FROM users ORDER BY role, nama ASC");
 $error = isset($_GET['error']) ? $_GET['error'] : '';
@@ -55,17 +54,7 @@ function getInitial($name)
 
             <div class="app-body">
 
-                <?php if (isset($_GET['success'])) { ?>
-                    <div class="alert alert-success mb-3">
-                        <?= htmlspecialchars($_GET['success']) ?>
-                    </div>
-                <?php } ?>
-
-                <?php if (isset($_GET['error'])) { ?>
-                    <div class="alert alert-danger mb-3">
-                        <?= htmlspecialchars($_GET['error']) ?>
-                    </div>
-                <?php } ?>
+                <?= elab_render_alerts($_GET['error'] ?? null, $_GET['success'] ?? null) ?>
 
                 <!-- Statistik -->
                 <div class="section-label">Ringkasan User</div>

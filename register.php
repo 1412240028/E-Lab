@@ -1,41 +1,46 @@
 <?php
-session_start();
+require_once 'includes/functions.php';
+require_once 'koneksi.php';
+
+elab_start_session();
 
 if (isset($_SESSION['role'])) {
-    header("Location: login.php");
-    exit;
+    elab_redirect('login.php');
 }
 
-include 'koneksi.php';
-
 if (isset($_POST['daftar'])) {
-    $nama      = trim($_POST['nama']);
-    $nim       = trim($_POST['nim']);
-    $email     = trim($_POST['email']);
-    $password  = trim($_POST['password']);
-    $konfirmasi = trim($_POST['konfirmasi']);
+    $nama = elab_sanitize_text($_POST['nama'] ?? '');
+    $nim = elab_sanitize_text($_POST['nim'] ?? '');
+    $email = elab_sanitize_text($_POST['email'] ?? '');
+    $password = elab_sanitize_text($_POST['password'] ?? '');
+    $konfirmasi = elab_sanitize_text($_POST['konfirmasi'] ?? '');
 
-    if ($password !== $konfirmasi) {
-        $error = "Password dan konfirmasi tidak cocok";
+    if ($nama === '' || $nim === '' || $email === '' || $password === '' || $konfirmasi === '') {
+        $error = 'Semua field wajib diisi';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = 'Format email tidak valid';
+    } elseif (strlen($password) < 6) {
+        $error = 'Password minimal 6 karakter';
+    } elseif ($password !== $konfirmasi) {
+        $error = 'Password dan konfirmasi tidak cocok';
     } else {
-        $cek = mysqli_prepare($conn, "SELECT * FROM users WHERE email=? OR nim=?");
-        mysqli_stmt_bind_param($cek, "ss", $email, $nim);
+        $cek = mysqli_prepare($conn, 'SELECT id_user FROM users WHERE email=? OR nim=? LIMIT 1');
+        mysqli_stmt_bind_param($cek, 'ss', $email, $nim);
         mysqli_stmt_execute($cek);
         $hasil = mysqli_stmt_get_result($cek);
 
         if (mysqli_num_rows($hasil) > 0) {
-            $error = "Email atau NIM sudah terdaftar";
+            $error = 'Email atau NIM sudah terdaftar';
         } else {
             $hash = password_hash($password, PASSWORD_DEFAULT);
-
             $stmt = mysqli_prepare($conn, "
                 INSERT INTO users(nama, nim, email, password, role)
                 VALUES(?, ?, ?, ?, 'mahasiswa')
             ");
-            mysqli_stmt_bind_param($stmt, "ssss", $nama, $nim, $email, $hash);
+            mysqli_stmt_bind_param($stmt, 'ssss', $nama, $nim, $email, $hash);
             mysqli_stmt_execute($stmt);
 
-            $success = "Registrasi berhasil! Silakan login.";
+            $success = 'Registrasi berhasil! Silakan login.';
         }
     }
 }

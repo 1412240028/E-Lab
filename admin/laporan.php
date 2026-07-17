@@ -1,13 +1,13 @@
 <?php
-session_start();
 require_once "_guard.php";
 require_once "../koneksi.php";
-
+require_once "../includes/functions.php";
 
 // Ambil filter dari GET
 $cari = isset($_GET['cari']) ? trim($_GET['cari']) : '';
 $filter_status = isset($_GET['status']) ? $_GET['status'] : '';
 $filter_tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : '';
+$filter_role = isset($_GET['role']) ? $_GET['role'] : '';
 
 // Build query dinamis
 $where = "WHERE 1=1";
@@ -15,10 +15,12 @@ $params = [];
 $types = "";
 
 if ($cari != '') {
-    $where .= " AND (users.nama LIKE ? OR laboratorium.nama_lab LIKE ?)";
+    $where .= " AND (users.nama LIKE ? OR laboratorium.nama_lab LIKE ? OR peminjaman.keperluan LIKE ? OR users.role LIKE ?)";
     $params[] = "%$cari%";
     $params[] = "%$cari%";
-    $types .= "ss";
+    $params[] = "%$cari%";
+    $params[] = "%$cari%";
+    $types .= "ssss";
 }
 
 if ($filter_status != '') {
@@ -30,6 +32,12 @@ if ($filter_status != '') {
 if ($filter_tanggal != '') {
     $where .= " AND peminjaman.tanggal_pinjam = ?";
     $params[] = $filter_tanggal;
+    $types .= "s";
+}
+
+if ($filter_role != '') {
+    $where .= " AND users.role = ?";
+    $params[] = $filter_role;
     $types .= "s";
 }
 
@@ -130,7 +138,7 @@ $totalDitolak = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM peminjaman WH
                         </div>
 
                         <div class="report-filter-panel">
-                            <form method="GET">
+                            <form method="GET" class="report-filter-form">
 
                                 <div class="filter-grid">
 
@@ -163,13 +171,19 @@ $totalDitolak = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM peminjaman WH
                                             value="<?= htmlspecialchars($filter_tanggal) ?>">
                                     </div>
 
+                                    <div class="input-group-modern">
+                                        <label>Role</label>
+                                        <select name="role" class="form-select">
+                                            <option value="">Semua Role</option>
+                                            <option value="mahasiswa" <?= $filter_role == 'mahasiswa' ? 'selected' : '' ?>>Mahasiswa</option>
+                                            <option value="dosen" <?= $filter_role == 'dosen' ? 'selected' : '' ?>>Dosen</option>
+                                            <option value="admin" <?= $filter_role == 'admin' ? 'selected' : '' ?>>Admin</option>
+                                        </select>
+                                    </div>
+
                                 </div>
 
                                 <div class="report-actions">
-                                    <button class="btn-filter">
-                                        Filter
-                                    </button>
-
                                     <a href="laporan.php" class="btn-reset">
                                         Reset
                                     </a>
@@ -237,6 +251,34 @@ $totalDitolak = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM peminjaman WH
 
         </section>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('.report-filter-form');
+            if (!form) {
+                return;
+            }
+
+            const controls = form.querySelectorAll('input, select');
+            let debounceTimer;
+
+            const submitFilter = function () {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(function () {
+                    if (form.requestSubmit) {
+                        form.requestSubmit();
+                    } else {
+                        form.submit();
+                    }
+                }, 250);
+            };
+
+            controls.forEach(function (control) {
+                control.addEventListener('input', submitFilter);
+                control.addEventListener('change', submitFilter);
+            });
+        });
+    </script>
 
 </body>
 

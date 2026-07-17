@@ -1,8 +1,7 @@
 <?php
-session_start();
 require_once "_guard.php";
 require_once "../koneksi.php";
-
+require_once "../includes/functions.php";
 
 $data = mysqli_query($conn, "SELECT * FROM laboratorium ORDER BY nama_lab ASC");
 
@@ -60,17 +59,7 @@ $labTidakTersedia = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laborator
 
             <div class="app-body">
 
-                <?php if (isset($_GET['success'])) { ?>
-                    <div class="alert alert-success mb-3">
-                        <?= htmlspecialchars($_GET['success']) ?>
-                    </div>
-                <?php } ?>
-
-                <?php if (isset($_GET['error'])) { ?>
-                    <div class="alert alert-danger mb-3">
-                        <?= htmlspecialchars($_GET['error']) ?>
-                    </div>
-                <?php } ?>
+                <?= elab_render_alerts($_GET['error'] ?? null, $_GET['success'] ?? null) ?>
 
                 <!-- Statistik Mini -->
                 <div class="section-label">Ringkasan Data Lab</div>
@@ -286,27 +275,37 @@ $labTidakTersedia = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM laborator
     </main>
 
     <script>
-        const searchInput  = document.getElementById('searchLab');
-        const filterSelect = document.getElementById('filterStatus');
-        const cards        = document.querySelectorAll('.manage-lab-card');
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchLab');
+            const filterSelect = document.getElementById('filterStatus');
+            const cards = document.querySelectorAll('.manage-lab-card');
+            const emptyMsg = document.getElementById('empty-filter-msg');
 
-        function filterLab() {
-            const keyword = searchInput.value.toLowerCase().trim();
-            const status  = filterSelect.value;
+            if (!searchInput || !filterSelect || cards.length === 0) {
+                return;
+            }
 
-            cards.forEach(card => {
-                const namaCocok   = card.dataset.nama.includes(keyword);
-                const statusCocok = status === '' || card.dataset.status === status;
-                card.style.display = (namaCocok && statusCocok) ? 'block' : 'none';
-            });
+            function filterLab() {
+                const keyword = searchInput.value.toLowerCase().trim();
+                const status = filterSelect.value.toLowerCase();
 
-            const visible = [...cards].filter(c => c.style.display !== 'none');
-            document.getElementById('empty-filter-msg').style.display =
-                visible.length === 0 ? 'block' : 'none';
-        }
+                cards.forEach(card => {
+                    const nama = (card.getAttribute('data-nama') || '').toLowerCase();
+                    const cardStatus = (card.getAttribute('data-status') || '').toLowerCase();
+                    const namaCocok = nama.includes(keyword);
+                    const statusCocok = status === '' || cardStatus === status;
+                    card.style.display = (namaCocok && statusCocok) ? 'block' : 'none';
+                });
 
-        searchInput.addEventListener('input', filterLab);
-        filterSelect.addEventListener('change', filterLab);
+                const visible = Array.from(cards).filter(card => card.style.display !== 'none');
+                if (emptyMsg) {
+                    emptyMsg.style.display = visible.length === 0 ? 'block' : 'none';
+                }
+            }
+
+            searchInput.addEventListener('input', filterLab);
+            filterSelect.addEventListener('change', filterLab);
+        });
     </script>
 
 </body>

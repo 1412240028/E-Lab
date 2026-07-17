@@ -2,7 +2,7 @@
 session_start();
 require_once("_guard.php");
 require_once "../koneksi.php";
-
+require_once "../includes/functions.php";
 
 $lab = mysqli_query($conn, "
     SELECT * FROM laboratorium
@@ -108,17 +108,7 @@ $inisial = strtoupper(substr($namaMahasiswa, 0, 2));
 
             <div class="app-body">
                 
-                <?php if (isset($_GET['success'])) { ?>
-                    <div class="alert alert-success mb-3">
-                        <?= htmlspecialchars($_GET['success']) ?>
-                    </div>
-                <?php } ?>
-
-                <?php if (isset($_GET['error'])) { ?>
-                    <div class="alert alert-danger mb-3">
-                        <?= htmlspecialchars($_GET['error']) ?>
-                    </div>
-                <?php } ?>
+                <?= elab_render_alerts($_GET['error'] ?? null, $_GET['success'] ?? null) ?>
 
                 <!-- Ringkasan -->
                 <div class="section-label">Ringkasan Saya</div>
@@ -180,7 +170,7 @@ $inisial = strtoupper(substr($namaMahasiswa, 0, 2));
 
                                 <div class="input-group-modern">
                                     <label>Tanggal Pinjam</label>
-                                    <input type="date" name="tanggal_pinjam" class="form-control" required>
+                                    <input type="date" name="tanggal_pinjam" class="form-control" required min="<?= date('Y-m-d') ?>">
                                 </div>
 
                                 <div class="row">
@@ -202,7 +192,7 @@ $inisial = strtoupper(substr($namaMahasiswa, 0, 2));
                                 <div class="input-group-modern">
                                     <label>Keperluan</label>
                                     <textarea name="keperluan" class="form-control" rows="4"
-                                        placeholder="Contoh: Praktikum pemrograman web" required></textarea>
+                                        placeholder="Contoh: Praktikum pemrograman web" required maxlength="255"></textarea>
                                 </div>
 
                                 <button class="btn student-cta w-100">

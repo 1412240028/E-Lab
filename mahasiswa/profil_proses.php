@@ -1,20 +1,15 @@
 <?php
-session_start();
-include '../koneksi.php';
+require_once "_guard.php";
+require_once "../koneksi.php";
+require_once "../includes/functions.php";
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'mahasiswa') {
-    header("Location: ../login.php");
-    exit;
-}
-
-$id_user       = (int) $_SESSION['id_user'];
-$nama          = trim($_POST['nama']          ?? '');
-$password_lama = trim($_POST['password_lama'] ?? '');
-$password_baru = trim($_POST['password_baru'] ?? '');
+$id_user = (int) $_SESSION['id_user'];
+$nama = elab_sanitize_text($_POST['nama'] ?? '');
+$password_lama = elab_sanitize_text($_POST['password_lama'] ?? '');
+$password_baru = elab_sanitize_text($_POST['password_baru'] ?? '');
 
 if ($nama === '' || $password_lama === '') {
-    header("Location: profil.php?error=Nama+dan+password+lama+wajib+diisi");
-    exit;
+    elab_redirect('profil.php', 'error', 'Nama dan password lama wajib diisi');
 }
 
 // Ambil hash password saat ini
@@ -24,8 +19,7 @@ mysqli_stmt_execute($stmtCek);
 $dataUser = mysqli_fetch_assoc(mysqli_stmt_get_result($stmtCek));
 
 if (!$dataUser || !password_verify($password_lama, $dataUser['password'])) {
-    header("Location: profil.php?error=Password+lama+salah");
-    exit;
+    elab_redirect('profil.php', 'error', 'Password lama salah');
 }
 
 if ($password_baru === '') {
@@ -34,8 +28,7 @@ if ($password_baru === '') {
     mysqli_stmt_bind_param($stmtUpd, "si", $nama, $id_user);
 } else {
     if (strlen($password_baru) < 6) {
-        header("Location: profil.php?error=Password+baru+minimal+6+karakter");
-        exit;
+        elab_redirect('profil.php', 'error', 'Password baru minimal 6 karakter');
     }
     $hashBaru = password_hash($password_baru, PASSWORD_DEFAULT);
     $stmtUpd  = mysqli_prepare($conn, "UPDATE users SET nama = ?, password = ? WHERE id_user = ?");
@@ -43,12 +36,10 @@ if ($password_baru === '') {
 }
 
 if (!mysqli_stmt_execute($stmtUpd)) {
-    header("Location: profil.php?error=Gagal+menyimpan+perubahan");
-    exit;
+    elab_redirect('profil.php', 'error', 'Gagal menyimpan perubahan');
 }
 
 $_SESSION['nama'] = $nama;
-
-header("Location: profil.php?success=Profil+berhasil+diperbarui");
-exit;
+elab_log_activity('profil_diperbarui', ['id_user' => $id_user]);
+elab_redirect('profil.php', 'success', 'Profil berhasil diperbarui');
 ?>

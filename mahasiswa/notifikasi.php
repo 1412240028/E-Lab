@@ -1,7 +1,7 @@
 <?php
-session_start();
 require_once("_guard.php");
 require_once "../koneksi.php";
+require_once "../includes/functions.php";
 
 
 // Hitung notifikasi belum dibaca sebelum ditandai read
@@ -133,6 +133,8 @@ $inisial = strtoupper(substr($namaMahasiswa, 0, 2));
                         Semua keputusan admin terkait pengajuan peminjaman akan tampil di sini. Notifikasi otomatis ditandai sudah dibaca setelah halaman ini dibuka.
                     </p>
                 </div>
+
+                <?= elab_render_alerts($_GET['error'] ?? null, $_GET['success'] ?? null) ?>
 
                 <div class="section-label">Daftar Notifikasi</div>
 

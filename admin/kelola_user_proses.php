@@ -1,53 +1,47 @@
 <?php
 require_once "_guard.php";
 require_once "../koneksi.php";
+require_once "../includes/functions.php";
 
 $aksi = isset($_POST['aksi']) ? trim($_POST['aksi']) : '';
 $allowedAksi = ['tambah', 'hapus'];
 
 if (!in_array($aksi, $allowedAksi, true)) {
-    header("Location: kelola_user.php?error=Aksi+tidak+valid");
-    exit;
+    elab_redirect('kelola_user.php', 'error', 'Aksi tidak valid');
 }
 
 $allowedRoles = ['admin', 'mahasiswa', 'dosen'];
 
 if ($aksi === 'tambah') {
-    $nama          = isset($_POST['nama'])     ? trim($_POST['nama'])     : '';
-    $email         = isset($_POST['email'])    ? trim($_POST['email'])    : '';
-    $plainPassword = isset($_POST['password']) ? trim($_POST['password']) : '';
-    $role          = isset($_POST['role'])     ? trim($_POST['role'])     : '';
-    $nim = isset($_POST['nim']) ? trim($_POST['nim']) : null;
-    $nip = isset($_POST['nip']) ? trim($_POST['nip']) : null;
+    $nama = elab_sanitize_text($_POST['nama'] ?? '');
+    $email = elab_sanitize_text($_POST['email'] ?? '');
+    $plainPassword = elab_sanitize_text($_POST['password'] ?? '');
+    $role = elab_sanitize_text($_POST['role'] ?? '');
+    $nim = elab_sanitize_text($_POST['nim'] ?? '');
+    $nip = elab_sanitize_text($_POST['nip'] ?? '');
 
     if ($nama === '' || $email === '' || $plainPassword === '' || $role === '') {
-        header("Location: kelola_user.php?error=Semua+field+wajib+diisi");
-        exit;
+        elab_redirect('kelola_user.php', 'error', 'Semua field wajib diisi');
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        header("Location: kelola_user.php?error=Format+email+tidak+valid");
-        exit;
+        elab_redirect('kelola_user.php', 'error', 'Format email tidak valid');
     }
 
     if (strlen($plainPassword) < 6) {
-        header("Location: kelola_user.php?error=Password+minimal+6+karakter");
-        exit;
+        elab_redirect('kelola_user.php', 'error', 'Password minimal 6 karakter');
     }
 
     if (!in_array($role, $allowedRoles, true)) {
-        header("Location: kelola_user.php?error=Role+tidak+valid");
-        exit;
+        elab_redirect('kelola_user.php', 'error', 'Role tidak valid');
     }
 
-    if ($role === 'mahasiswa' && empty($nim)) {
-        header("Location: kelola_user.php?error=NIM+wajib+diisi+untuk+mahasiswa");
-        exit;
+    if ($role === 'mahasiswa' && $nim === '') {
+        elab_redirect('kelola_user.php', 'error', 'NIM wajib diisi untuk mahasiswa');
     }
 
-    if ($role === 'dosen' && empty($nip)) {
-        header("Location: kelola_user.php?error=NIP+wajib+diisi+untuk+dosen");
-        exit;
+    if ($role === 'dosen' && $nip === '') {
+        elab_redirect('kelola_user.php', 'error', 'NIP wajib diisi untuk dosen');
     }
 
     $cek = mysqli_prepare($conn, "
@@ -55,8 +49,7 @@ if ($aksi === 'tambah') {
     ");
 
     if (!$cek) {
-        header("Location: kelola_user.php?error=Gagal+menyiapkan+validasi+email");
-        exit;
+        elab_redirect('kelola_user.php', 'error', 'Gagal menyiapkan validasi email');
     }
 
     mysqli_stmt_bind_param($cek, "s", $email);
@@ -64,8 +57,7 @@ if ($aksi === 'tambah') {
     $hasil = mysqli_stmt_get_result($cek);
 
     if (mysqli_num_rows($hasil) > 0) {
-        header("Location: kelola_user.php?error=Email+sudah+terdaftar");
-        exit;
+        elab_redirect('kelola_user.php', 'error', 'Email sudah terdaftar');
     }
 
     if (!empty($nim)) {
@@ -75,8 +67,7 @@ if ($aksi === 'tambah') {
         mysqli_stmt_bind_param($cekNim, "s", $nim);
         mysqli_stmt_execute($cekNim);
         if (mysqli_num_rows(mysqli_stmt_get_result($cekNim)) > 0) {
-            header("Location: kelola_user.php?error=NIM+sudah+terdaftar");
-            exit;
+            elab_redirect('kelola_user.php', 'error', 'NIM sudah terdaftar');
         }
     }
 
@@ -87,8 +78,7 @@ if ($aksi === 'tambah') {
         mysqli_stmt_bind_param($cekNip, "s", $nip);
         mysqli_stmt_execute($cekNip);
         if (mysqli_num_rows(mysqli_stmt_get_result($cekNip)) > 0) {
-            header("Location: kelola_user.php?error=NIP+sudah+terdaftar");
-            exit;
+            elab_redirect('kelola_user.php', 'error', 'NIP sudah terdaftar');
         }
     }
 
@@ -100,32 +90,28 @@ if ($aksi === 'tambah') {
     ");
 
     if (!$stmt) {
-        header("Location: kelola_user.php?error=Gagal+menyiapkan+data+pengguna");
-        exit;
+        elab_redirect('kelola_user.php', 'error', 'Gagal menyiapkan data pengguna');
     }
 
     mysqli_stmt_bind_param($stmt, "ssssss", $nama, $nim, $nip, $email, $hashedPassword, $role);
 
     if (!mysqli_stmt_execute($stmt)) {
-        header("Location: kelola_user.php?error=Gagal+menambahkan+pengguna");
-        exit;
+        elab_redirect('kelola_user.php', 'error', 'Gagal menambahkan pengguna');
     }
 
-    header("Location: kelola_user.php?success=Pengguna+berhasil+ditambahkan");
-    exit;
+    elab_log_activity('user_ditambahkan', ['nama' => $nama, 'role' => $role]);
+    elab_redirect('kelola_user.php', 'success', 'Pengguna berhasil ditambahkan');
 }
 
 if ($aksi === 'hapus') {
     $id_user = isset($_POST['id_user']) ? (int) $_POST['id_user'] : 0;
 
     if ($id_user <= 0) {
-        header("Location: kelola_user.php?error=User+tidak+valid");
-        exit;
+        elab_redirect('kelola_user.php', 'error', 'User tidak valid');
     }
 
     if ($id_user === (int) $_SESSION['id_user']) {
-        header("Location: kelola_user.php?error=Tidak+bisa+hapus+akun+sendiri");
-        exit;
+        elab_redirect('kelola_user.php', 'error', 'Tidak bisa hapus akun sendiri');
     }
 
     $stmt = mysqli_prepare($conn, "
@@ -133,18 +119,16 @@ if ($aksi === 'hapus') {
     ");
 
     if (!$stmt) {
-        header("Location: kelola_user.php?error=Gagal+menyiapkan+hapus+pengguna");
-        exit;
+        elab_redirect('kelola_user.php', 'error', 'Gagal menyiapkan hapus pengguna');
     }
 
     mysqli_stmt_bind_param($stmt, "i", $id_user);
 
     if (!mysqli_stmt_execute($stmt)) {
-        header("Location: kelola_user.php?error=Gagal+menghapus+pengguna");
-        exit;
+        elab_redirect('kelola_user.php', 'error', 'Gagal menghapus pengguna');
     }
 
-    header("Location: kelola_user.php?success=Pengguna+berhasil+dihapus");
-    exit;
+    elab_log_activity('user_dihapus', ['id_user' => $id_user]);
+    elab_redirect('kelola_user.php', 'success', 'Pengguna berhasil dihapus');
 }
 ?>

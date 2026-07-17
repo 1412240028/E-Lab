@@ -1,6 +1,7 @@
 <?php
 require_once "_guard.php";
 require_once "../koneksi.php";
+require_once "../includes/functions.php";
 
 $nama   = $_SESSION['nama'] ?? 'Dosen';
 $idUser = (int) $_SESSION['id_user'];
@@ -67,17 +68,7 @@ $riwayat = mysqli_stmt_get_result($stmtRiwayat);
 
         <main class="app-body dosen-body">
 
-            <?php if (isset($_GET['success'])): ?>
-                <div class="alert alert-success mb-3">
-                    <?= htmlspecialchars($_GET['success']) ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if (isset($_GET['error'])): ?>
-                <div class="alert alert-danger mb-3">
-                    <?= htmlspecialchars($_GET['error']) ?>
-                </div>
-            <?php endif; ?>
+            <?= elab_render_alerts($_GET['error'] ?? null, $_GET['success'] ?? null) ?>
 
             <!-- Hero -->
             <section class="lecturer-hero-card">
@@ -132,7 +123,7 @@ $riwayat = mysqli_stmt_get_result($stmtRiwayat);
 
                             <div class="input-group-modern">
                                 <label>Tanggal Pinjam</label>
-                                <input type="date" name="tanggal_pinjam" class="form-control" required>
+                                <input type="date" name="tanggal_pinjam" class="form-control" required min="<?= date('Y-m-d') ?>">
                             </div>
 
                             <div class="row">
@@ -153,7 +144,7 @@ $riwayat = mysqli_stmt_get_result($stmtRiwayat);
                             <div class="input-group-modern">
                                 <label>Keperluan</label>
                                 <textarea name="keperluan" class="form-control" rows="4"
-                                    placeholder="Contoh: Praktikum jaringan komputer" required></textarea>
+                                    placeholder="Contoh: Praktikum jaringan komputer" required maxlength="255"></textarea>
                             </div>
 
                             <button class="btn student-cta w-100">
