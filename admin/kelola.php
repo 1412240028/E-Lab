@@ -3,10 +3,6 @@ session_start();
 require_once "_guard.php";
 require_once "../koneksi.php";
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    header("Location: ../login.php");
-    exit;
-}
 
 $data = mysqli_query($conn, "SELECT * FROM laboratorium ORDER BY nama_lab ASC");
 

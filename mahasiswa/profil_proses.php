@@ -2,48 +2,53 @@
 session_start();
 include '../koneksi.php';
 
-if(!isset($_SESSION['role']) || $_SESSION['role'] != 'mahasiswa'){
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'mahasiswa') {
     header("Location: ../login.php");
     exit;
 }
 
-$id_user = (int)$_SESSION['id_user'];
-$nama = trim($_POST['nama']);
-$password_baru = trim($_POST['password_baru']);
-$password_lama = md5(trim($_POST['password_lama']));
+$id_user       = (int) $_SESSION['id_user'];
+$nama          = trim($_POST['nama']          ?? '');
+$password_lama = trim($_POST['password_lama'] ?? '');
+$password_baru = trim($_POST['password_baru'] ?? '');
 
-// Cek password lama
-$cek = mysqli_prepare($conn,"
-    SELECT * FROM users WHERE id_user=? AND password=?
-");
-mysqli_stmt_bind_param($cek, "is", $id_user, $password_lama);
-mysqli_stmt_execute($cek);
-$hasil = mysqli_stmt_get_result($cek);
-
-if(mysqli_num_rows($hasil) == 0){
-    echo "<script>alert('Password lama salah'); window.location='profil.php';</script>";
+if ($nama === '' || $password_lama === '') {
+    header("Location: profil.php?error=Nama+dan+password+lama+wajib+diisi");
     exit;
 }
 
-// Update nama saja
-if($password_baru == ''){
-    $stmt = mysqli_prepare($conn,"
-        UPDATE users SET nama=? WHERE id_user=?
-    ");
-    mysqli_stmt_bind_param($stmt, "si", $nama, $id_user);
-}else{
-    // Update nama + password
-    $password_baru_hash = md5($password_baru);
-    $stmt = mysqli_prepare($conn,"
-        UPDATE users SET nama=?, password=? WHERE id_user=?
-    ");
-    mysqli_stmt_bind_param($stmt, "ssi", $nama, $password_baru_hash, $id_user);
+// Ambil hash password saat ini
+$stmtCek = mysqli_prepare($conn, "SELECT password FROM users WHERE id_user = ? LIMIT 1");
+mysqli_stmt_bind_param($stmtCek, "i", $id_user);
+mysqli_stmt_execute($stmtCek);
+$dataUser = mysqli_fetch_assoc(mysqli_stmt_get_result($stmtCek));
+
+if (!$dataUser || !password_verify($password_lama, $dataUser['password'])) {
+    header("Location: profil.php?error=Password+lama+salah");
+    exit;
 }
 
-mysqli_stmt_execute($stmt);
+if ($password_baru === '') {
+    // Hanya update nama
+    $stmtUpd = mysqli_prepare($conn, "UPDATE users SET nama = ? WHERE id_user = ?");
+    mysqli_stmt_bind_param($stmtUpd, "si", $nama, $id_user);
+} else {
+    if (strlen($password_baru) < 6) {
+        header("Location: profil.php?error=Password+baru+minimal+6+karakter");
+        exit;
+    }
+    $hashBaru = password_hash($password_baru, PASSWORD_DEFAULT);
+    $stmtUpd  = mysqli_prepare($conn, "UPDATE users SET nama = ?, password = ? WHERE id_user = ?");
+    mysqli_stmt_bind_param($stmtUpd, "ssi", $nama, $hashBaru, $id_user);
+}
 
-// Update session nama
+if (!mysqli_stmt_execute($stmtUpd)) {
+    header("Location: profil.php?error=Gagal+menyimpan+perubahan");
+    exit;
+}
+
 $_SESSION['nama'] = $nama;
 
-echo "<script>alert('Profil berhasil diupdate'); window.location='profil.php';</script>";
+header("Location: profil.php?success=Profil+berhasil+diperbarui");
+exit;
 ?>

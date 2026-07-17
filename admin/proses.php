@@ -25,7 +25,7 @@ $stmt = mysqli_prepare($conn, "
 ");
 
 if (!$stmt) {
-    header("Location: dashboard.php?error=Gagal menyiapkan data peminjaman");
+    header("Location: dashboard.php?error=Gagal+menyiapkan+data+peminjaman");
     exit;
 }
 

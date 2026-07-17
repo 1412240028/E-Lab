@@ -31,7 +31,7 @@ $cekBentrok = mysqli_prepare($conn, "
 ");
 
 if (!$cekBentrok) {
-    header("Location: dashboard.php?error=Gagal menyiapkan pengecekan jadwal");
+    header("Location: dashboard.php?error=Gagal+menyiapkan+pengecekan+jadwal");
     exit;
 }
 
@@ -58,7 +58,7 @@ $stmt = mysqli_prepare($conn, "
 ");
 
 if (!$stmt) {
-    header("Location: dashboard.php?error=Gagal menyiapkan data peminjaman");
+    header("Location: dashboard.php?error=Gagal+menyiapkan+data+peminjaman");
     exit;
 }
 
@@ -74,10 +74,10 @@ mysqli_stmt_bind_param(
 );
 
 if (!mysqli_stmt_execute($stmt)) {
-    header("Location: dashboard.php?error=Peminjaman gagal diajukan");
+    header("Location: dashboard.php?error=Peminjaman+gagal+diajukan");
     exit;
 }
 
-header("Location: dashboard.php?success=Peminjaman berhasil diajukan");
+header("Location: dashboard.php?success=Peminjaman+berhasil+diajukan");
 exit;
 ?>

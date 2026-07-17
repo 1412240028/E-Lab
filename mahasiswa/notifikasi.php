@@ -3,10 +3,6 @@ session_start();
 require_once("_guard.php");
 require_once "../koneksi.php";
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'mahasiswa') {
-    header("Location: ../login.php");
-    exit;
-}
 
 // Hitung notifikasi belum dibaca sebelum ditandai read
 $stmtCountBefore = mysqli_prepare($conn, "

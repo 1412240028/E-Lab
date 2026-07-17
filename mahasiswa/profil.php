@@ -3,10 +3,6 @@ session_start();
 require_once("_guard.php");
 require_once "../koneksi.php";
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'mahasiswa') {
-    header("Location: ../login.php");
-    exit;
-}
 
 // Ambil data user
 $stmt = mysqli_prepare($conn, "SELECT * FROM users WHERE id_user=?");
@@ -101,6 +97,18 @@ $totalDitolak = mysqli_fetch_assoc(mysqli_stmt_get_result($stmtDitolak))['total'
             </header>
 
             <div class="app-body">
+
+                <?php if (isset($_GET['success'])) { ?>
+                    <div class="alert alert-success mb-3">
+                        <?= htmlspecialchars($_GET['success']) ?>
+                    </div>
+                <?php } ?>
+
+                <?php if (isset($_GET['error'])) { ?>
+                    <div class="alert alert-danger mb-3">
+                        <?= htmlspecialchars($_GET['error']) ?>
+                    </div>
+                <?php } ?>
 
                 <!-- Ringkasan -->
                 <div class="section-label">Ringkasan Akun</div>

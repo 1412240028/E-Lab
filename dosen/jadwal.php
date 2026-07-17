@@ -23,7 +23,7 @@ $jadwal = mysqli_query($conn, "
 
 <head>
     <meta charset="UTF-8">
-    <title>Jadwal Dosen - E-Lab Smart System</title>
+    <title>Jadwal Laboratorium - E-Lab Smart System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Bootstrap -->
@@ -45,7 +45,7 @@ $jadwal = mysqli_query($conn, "
             <header class="app-header lecturer">
                 <div class="app-header-content d-flex justify-content-between align-items-center">
                     <div>
-                        <h1 class="app-title">Dashboard Dosen</h1>
+                        <h1 class="app-title">Jadwal Laboratorium</h1>
                         <p class="app-subtitle">
                             <?= htmlspecialchars($nama); ?> • Panel akademik laboratorium
                         </p>

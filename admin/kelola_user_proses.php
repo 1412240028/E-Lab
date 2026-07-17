@@ -6,7 +6,7 @@ $aksi = isset($_POST['aksi']) ? trim($_POST['aksi']) : '';
 $allowedAksi = ['tambah', 'hapus'];
 
 if (!in_array($aksi, $allowedAksi, true)) {
-    header("Location: kelola_user.php?success=Pengguna+berhasil+ditambahkan");
+    header("Location: kelola_user.php?error=Aksi+tidak+valid");
     exit;
 }
 

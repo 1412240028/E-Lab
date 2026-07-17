@@ -3,11 +3,6 @@ session_start();
 require_once("_guard.php");
 require_once "../koneksi.php";
 
-// Cek session
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'mahasiswa') {
-    header("Location: ../login.php");
-    exit;
-}
 
 $lab = mysqli_query($conn, "
     SELECT * FROM laboratorium

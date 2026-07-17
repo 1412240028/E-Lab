@@ -3,10 +3,6 @@ session_start();
 require_once "_guard.php";
 require_once "../koneksi.php";
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    header("Location: ../login.php");
-    exit;
-}
 
 // Ambil filter dari GET
 $cari = isset($_GET['cari']) ? trim($_GET['cari']) : '';

@@ -3,10 +3,6 @@ session_start();
 require_once "_guard.php";
 include '../koneksi.php';
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    header("Location: ../login.php");
-    exit;
-}
 
 $filter_id_lab = isset($_GET['id_lab']) ? (int) $_GET['id_lab'] : 0;
 
