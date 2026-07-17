@@ -4,12 +4,12 @@ E-Lab Smart System adalah aplikasi manajemen peminjaman laboratorium berbasis we
 
 ## Fitur Utama
 
-- Login multi-role
+- Login multi-role untuk admin, dosen, dan mahasiswa
 - Registrasi mahasiswa
-- Dashboard admin, mahasiswa, dan dosen
+- Dashboard untuk masing-masing role
 - Pengajuan peminjaman laboratorium
 - Verifikasi peminjaman oleh admin/dosen
-- Monitoring status laboratorium
+- Monitoring status peminjaman
 - Riwayat peminjaman mahasiswa
 - Notifikasi status peminjaman
 - Kelola data laboratorium
@@ -25,108 +25,104 @@ Admin memiliki akses untuk memonitor sistem, mengelola laboratorium, mengelola p
 
 ### Mahasiswa
 
-Mahasiswa dapat melakukan registrasi, login, mengajukan peminjaman laboratorium, melihat riwayat, dan menerima notifikasi status pengajuan.
+Mahasiswa dapat mendaftar, login, mengajukan peminjaman laboratorium, melihat riwayat, dan menerima notifikasi status pengajuan.
 
 ### Dosen
 
-Dosen dapat melihat jadwal penggunaan laboratorium dan melakukan verifikasi terhadap pengajuan peminjaman mahasiswa.
+Dosen dapat melihat jadwal penggunaan laboratorium dan melakukan verifikasi terhadap peminjaman mahasiswa.
 
 ## Teknologi yang Digunakan
 
 - PHP Native
 - MySQL
 - Bootstrap 5
-- CSS Modular
+- CSS modular
 - Chart.js
 - TCPDF
-- XAMPP
+- Composer
+- XAMPP / PHP lokal
 
 ## Struktur Folder
 
 ```txt
-elab_smart_system/
+E-Lab/
 ├── admin/
 │   ├── dashboard.php
-│   ├── jadwal.php
-│   ├── laporan.php
-│   ├── kelola.php
-│   ├── kelola_user.php
-│   ├── proses.php
-│   ├── kelola_proses.php
-│   ├── kelola_user_proses.php
 │   ├── export_excel.php
 │   ├── export_pdf.php
+│   ├── jadwal.php
+│   ├── kelola.php
+│   ├── kelola_proses.php
+│   ├── kelola_user.php
+│   ├── kelola_user_proses.php
+│   ├── laporan.php
+│   ├── proses.php
 │   ├── _guard.php
 │   └── _nav.php
-│
-├── mahasiswa/
-│   ├── dashboard.php
-│   ├── simpan.php
-│   ├── riwayat.php
-│   ├── notifikasi.php
-│   ├── profil.php
-│   ├── _guard.php
-│   └── _nav.php
-│
+├── assets/
+│   ├── css/
+│   └── images/
 ├── dosen/
 │   ├── dashboard.php
 │   ├── jadwal.php
 │   ├── verifikasi.php
 │   ├── _guard.php
 │   └── _nav.php
-│
-├── assets/
-│   ├── css/
-│   └── images/
-│
+├── mahasiswa/
+│   ├── cetak_surat.php
+│   ├── dashboard.php
+│   ├── notifikasi.php
+│   ├── profil.php
+│   ├── profil_proses.php
+│   ├── riwayat.php
+│   ├── simpan.php
+│   ├── _guard.php
+│   └── _nav.php
+├── vendor/
+├── composer.json
+├── composer.lock
 ├── koneksi.php
-├── index.php
 ├── login.php
+├── logout.php
 ├── register.php
-└── logout.php
+└── index.php
+```
 
-## Alur Sistem
+## Kebutuhan Sistem
 
-1. Mahasiswa mengajukan peminjaman
-2. Status awal: **menunggu**
-3. Admin/Dosen melakukan verifikasi
-4. Status berubah menjadi **disetujui** atau **ditolak**
-5. Mahasiswa menerima notifikasi
-6. Data masuk ke riwayat dan laporan
+- PHP 7.4 atau lebih baru
+- MySQL / MariaDB
+- Composer
+- XAMPP atau stack web serupa
 
+## Instalasi dan Menjalankan Project
 
-Sistem menggunakan tiga status utama:
+1. Clone repository ini ke folder lokal:
+   ```bash
+git clone https://github.com/1412240028/E-Lab
+cd E-Lab
+```
+2. Install dependency Composer:
+   ```bash
+composer install
+```
+3. Salin file konfigurasi database (jika diperlukan) dan sesuaikan `koneksi.php`:
+   ```php
+   define('DB_HOST', 'localhost');
+   define('DB_USER', 'root');
+   define('DB_PASS', '');
+   define('DB_NAME', 'elab_smart_system');
+   ```
+4. Jalankan Apache dan MySQL di XAMPP.
+5. Import database ke phpMyAdmin.
+6. Akses aplikasi melalui browser:
+   ```text
+http://localhost/lab/
+```
 
-- menunggu
-- disetujui
-- ditolak
-## Keamanan Dasar
-
-Beberapa penerapan keamanan yang digunakan:
-
-- Session guard per role
-- Validasi role admin, mahasiswa, dan dosen
-- Prepared statement untuk query dengan input user
-- Password menggunakan `password_hash()`
-- Validasi status peminjaman
-- Validasi role pengguna
-- Validasi input form
-- Aksi update data menggunakan POST
-## Cara Menjalankan Project
-
-1. Clone repository ini.
-2. Pindahkan folder project ke direktori `htdocs` XAMPP.
-3. Jalankan Apache dan MySQL dari XAMPP.
-4. Import database ke phpMyAdmin.
-5. Sesuaikan konfigurasi database di file:
-   - `elab_smart_system/koneksi.php`
-6. Buka project melalui browser:
-   - http://localhost/lab/elab_smart_system/
 ## Konfigurasi Database
 
-File koneksi database berada di:
-
-- `elab_smart_system/koneksi.php`
+File konfigurasi database berada di `koneksi.php`.
 
 Contoh konfigurasi lokal:
 
@@ -136,7 +132,14 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'elab_smart_system');
 ```
-## Catatan Pengembangan
+
+## Catatan Penting
+
+- Folder `vendor/` dibutuhkan untuk dependency TCPDF.
+- Jangan menghapus `vendor/` jika ingin menjalankan export PDF.
+- Jika menggunakan VS Code, tambahkan `vendor/` ke exclude agar editor tidak memproses file dependency besar.
+
+## Pengembangan
 
 Project ini dikembangkan sebagai sistem peminjaman laboratorium berbasis role dengan fokus pada kemudahan penggunaan, validasi data, dan tampilan antarmuka yang konsisten.
 
